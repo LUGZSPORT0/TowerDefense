@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include "Math.h"
 
 class Game
 {
@@ -20,6 +21,10 @@ public:
 
 	SDL_Texture* GetTexture(const std::string& fileName);
 
+	// Game-specific
+	class Grid* GetGrid() { return mGrid; }
+	std::vector<class Enemy*>& GetEnemies() { return mEnemies; }
+	class Enemy* GetNearestEnemy(const Vector2& pos);
 private:
 	void ProcessInput();
 	void UpdateGame();
@@ -44,4 +49,9 @@ private:
 	bool mIsRunning;
 	// Track if we're updating actors right now
 	bool mUpdatingActors;
+
+	// Game-specific
+	std::vector<class Enemy*> mEnemies;
+	class Grid* mGrid;
+	float mNextEnemy;
 };

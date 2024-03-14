@@ -11,13 +11,16 @@
 #include <algorithm>
 #include "Actor.h"
 #include "SpriteComponent.h"
-#include "Ship.h"
+#include "Grid.h"
+#include "Enemy.h"
+#include "AIComponent.h"
+#include "AIState.h"
 
 Game::Game()
-	:mWindow(nullptr)
-	, mRenderer(nullptr)
-	, mIsRunning(true)
-	, mUpdatingActors(false)
+:mWindow(nullptr)
+, mRenderer(nullptr)
+, mIsRunning(true)
+, mUpdatingActors(false)
 {
 
 }
@@ -30,7 +33,7 @@ bool Game::Initialize()
 		return false;
 	}
 
-	mWindow = SDL_CreateWindow("Game Programming in C++ (Chapter 2)", 100, 100, 1024, 768, 0);
+	mWindow = SDL_CreateWindow("Game Programming in C++ (Chapter 4)", 100, 100, 1024, 768, 0);
 	if (!mWindow)
 	{
 		SDL_Log("Failed to create window: %s", SDL_GetError());
@@ -80,14 +83,32 @@ void Game::ProcessInput()
 		}
 	}
 
-	const Uint8* state = SDL_GetKeyboardState(NULL);
-	if (state[SDL_SCANCODE_ESCAPE])
+	const Uint8* keyState = SDL_GetKeyboardState(NULL);
+	if (keyState[SDL_SCANCODE_ESCAPE])
 	{
 		mIsRunning = false;
 	}
+	
+	if (keyState[SDL_SCANCODE_B])
+	{
+		mGrid->BuildTower();
+	}
 
-	//// Process ship input
-	//mShip->ProcessKeyboard(state);
+	// Process mouse
+	int x, y;
+	Uint32 buttons = SDL_GetMouseState(&x, &y);
+	// check that a button is being clicked and that it is the left button
+	if (SDL_BUTTON(buttons) & SDL_BUTTON_LEFT)
+	{
+		mGrid->ProcessClick(x, y);
+	}
+
+	mUpdatingActors = true;
+	for (auto actor : mActors)
+	{
+		actor->ProcessInput(keyState);
+	}
+	mUpdatingActors = false;
 }
 
 void Game::UpdateGame()
@@ -152,10 +173,17 @@ void Game::GenerateOutput()
 
 void Game::LoadData()
 {
-	//// Create player's ship
-	//mShip = new Ship(this);
-	//mShip->SetPosition(Vector2(100.0f, 384.0f));
-	//mShip->SetScale(1.5f);
+	mGrid = new Grid(this);
+
+	// For testing AIComponent
+	//Actor* a = new Actor(this);
+	//AIComponent* aic = new AICompoenent(a);
+	//// Register state with AIComponent
+	//aic->RegisterState(new AIPatrol(aic));
+	//aic->RegisterState(new AIDeath(aic));
+	//aic->RegisterState(new AIAttack(aic));
+	//// Start in patrol state
+	//aic->ChangeState("Patrol");
 }
 
 void Game::UnloadData()
@@ -276,4 +304,27 @@ void Game::RemoveSprite(SpriteComponent* sprite)
 	// (We can't swap because it ruins ordering)
 	auto iter = std::find(mSprites.begin(), mSprites.end(), sprite);
 	mSprites.erase(iter);
+}
+
+Enemy* Game::GetNearestEnemy(const Vector2& pos)
+{
+	Enemy* best = nullptr;
+
+	if (mEnemies.size() > 0)
+	{
+		best = mEnemies[0];
+		// Save the distance squared of first enemy, and test if others are closer
+		float bestDistSq = (pos - mEnemies[0]->GetPosition()).LengthSq());
+		for (size_t i = 1; i < mEnemies.size(); i++)
+		{
+			float newDistSq = (pos - mEnemies[i]->GetPosition()).LengthSq();
+			if (newDistSq < bestDistSq)
+			{
+				bestDistSq = newDistSq;
+				best = mEnemies[i];
+			}
+		}
+	}
+
+	return best;
 }
