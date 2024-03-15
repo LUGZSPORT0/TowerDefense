@@ -6,9 +6,14 @@
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
 
-#pragma once
+// Specifies that the compiler includes the header file only once, when compiling a source code file.
+// The use of #pragma once can reduce build times, as the compiler won't open and read the file again after the first #include of the file in the translation unit
+#pragma once 
 #include <vector>
 #include "Math.h"
+// This header defines a set of integral type aliases with specific width requirements, 
+// along with macros specifying their limits and macro functions to create values of these types.
+#include <cstdint>
 
 class Actor
 {
@@ -49,7 +54,6 @@ public:
 	void SetState(State state) { mState = state; }
 
 	class Game* GetGame() { return mGame; }
-
 
 	// Add/remove components
 	void AddComponent(class Component* component);

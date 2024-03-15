@@ -9,6 +9,7 @@
 #include "Actor.h"
 #include "Game.h"
 #include "Component.h"
+// The header <algorithm> defines a collection of functions especially designed to be used on ranges of elements.
 #include <algorithm>
 
 Actor::Actor(Game* game)
