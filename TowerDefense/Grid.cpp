@@ -119,7 +119,36 @@ bool Grid::FindPath(Tile* start, Tile* goal)
 				continue;
 			}
 
-
+			// Only check nodes that aren't in the closed set
+			if (!neighbor->mInClosedSet)
+			{
+				if (!neighbor->mInClosedSet)
+				{
+					// Not in the open set, so set parent
+					neighbor->mParent = current;
+					neighbor->h = (neighbor->GetPosition() - goal->GetPosition()).Length();
+					// g(x) is the parent's g plus cost of traversing edge
+					neighbor->g = current->g + TileSize;
+					neighbor->f = neighbor->g + neighbor->h;
+					openSet.emplace_back(neighbor);
+					neighbor->mInOpenSet = true;
+				}
+				else
+				{
+					// Compute g(x) cost if current becomes the parent
+					float newG = current->g + TileSize;
+					if (newG < neighbor->g)
+					{
+						// Adopt this node
+						neighbor->mParent = current;
+						neighbor->g = newG;
+						// f(x) changes because g(x) changes
+						neighbor->f = neighbor->g + neighbor->h;
+					}
+				}
+			}
 		}
+
+
 	}
 }
