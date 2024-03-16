@@ -149,6 +149,90 @@ bool Grid::FindPath(Tile* start, Tile* goal)
 			}
 		}
 
+		// If open set is empty all possible paths are exhausted
+		if (openSet.empty())
+		{
+			break;
+		}
 
+		// Find lowest cost node in open set
+		auto iter = std::min_element(openSet.begin(), openSet.end(),
+									[](Tile* a, Tile* b) {
+										return a->f < b->f;
+									});
+
+		// Set to current and move from open to closed
+		current = *iter;
+		openSet.erase(iter);
+		current->mInOpenSet = false;
+		current->mInClosedSet = true;
+	}
+	while (current != goal);
+	
+	// Did we find a path?
+	return (current == goal) ? true : false;
+}
+
+void Grid::UpdatePathTiles(class Tile* start)
+{
+	// Reset all tiles to normal (except for start/end)
+	for (size_t i = 0; i < NumRows; i++)
+	{
+		for (size_t j = 0; j < NumCols; j++)
+		{
+			if (!(i == 3 && j == 0) && !(i == 3 && j == 15))
+			{
+				mTiles[i][j]->SetTileState(Tile::EDefault);
+			}
+		}
+	}
+	Tile* t = start->mParent;
+	while (t != GetEndTile())
+	{
+		t->SetTileState(Tile::EPath);
+		t = t->mParent;
+	}
+}
+
+void Grid::BuildTower()
+{
+	if (mSelectedTile && !mSelectedTile->mBlocked)
+	{
+		mSelectedTile->mBlocked = true;
+		if (FindPath(GetEndTile(), GetStartTile()))
+		{
+			Tower* t = new Tower(GetGame());
+			t->SetPosition(mSelectedTile->GetPosition());
+		}
+		else
+		{
+			// This tower would block the path
+			mSelectedTile->mBlocked = false;
+			FindPath(GetEndTile(), GetStartTile());
+		}
+		UpdatePathTiles(GetStartTile());
+	}
+}
+
+Tile* Grid::GetStartTile()
+{
+	return mTiles[3][0];
+}
+
+Tile* Grid::GetEndTile()
+{
+	return mTiles[3][15];
+}
+
+void Grid::UpdateActor(float deltaTime)
+{
+	Actor::UpdateActor(deltaTime);
+
+	// Is it time to spawn a new enemy?
+	mNextEnemy -= deltaTime;
+	if (mEnemy <= 0.0f)
+	{
+		new Enemy(GetGame());
+		mNextEnemy += EnemyTime;
 	}
 }
