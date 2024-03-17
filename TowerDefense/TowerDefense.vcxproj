@@ -22,6 +22,7 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="CircleComponent.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -31,11 +32,13 @@
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
     <ClInclude Include="CircleComponent.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="Math.h" />
@@ -44,6 +47,7 @@
     <ClInclude Include="Random.h" />
     <ClInclude Include="SpriteComponent.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="Tower.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
