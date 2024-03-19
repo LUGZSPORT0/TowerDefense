@@ -27,4 +27,6 @@ bool Intersect(const CircleComponent& a, const CircleComponent& b)
 	// Calculate sum of radii squared
 	float radiiSq = a.GetRadius() + b.GetRadius();
 	radiiSq *= radiiSq;
+
+	return distSq <= radiiSq;
 }

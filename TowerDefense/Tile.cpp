@@ -46,6 +46,13 @@ void Tile::UpdateTexture()
 		else
 			text = "Assets/TileGrey.png";
 		break;
+	case EDefault:
+	default:
+		if (mSelected)
+			text = "Assets/TileBrownSelected.png";
+		else
+			text = "Assets/TileBrown.png";
+		break;
 	}
 	mSprite->SetTexture(GetGame()->GetTexture(text));
 }

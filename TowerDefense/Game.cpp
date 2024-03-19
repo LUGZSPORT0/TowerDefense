@@ -314,7 +314,7 @@ Enemy* Game::GetNearestEnemy(const Vector2& pos)
 	{
 		best = mEnemies[0];
 		// Save the distance squared of first enemy, and test if others are closer
-		float bestDistSq = (pos - mEnemies[0]->GetPosition()).LengthSq());
+		float bestDistSq = (pos - mEnemies[0]->GetPosition()).LengthSq();
 		for (size_t i = 1; i < mEnemies.size(); i++)
 		{
 			float newDistSq = (pos - mEnemies[i]->GetPosition()).LengthSq();

@@ -20,6 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="AIComponent.cpp" />
+    <ClCompile Include="AIState.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="CircleComponent.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Enemy.cpp" />
@@ -30,12 +33,16 @@
     <ClCompile Include="MoveComponent.cpp" />
     <ClCompile Include="NavComponent.cpp" />
     <ClCompile Include="Random.cpp" />
+    <ClCompile Include="Search.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
+    <ClInclude Include="AIComponent.h" />
+    <ClInclude Include="AIState.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="CircleComponent.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Enemy.h" />
@@ -145,6 +152,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>Default</LanguageStandard>
+      <ProgramDataBaseFileName>$(TEMP)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

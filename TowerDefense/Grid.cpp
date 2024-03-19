@@ -230,7 +230,7 @@ void Grid::UpdateActor(float deltaTime)
 
 	// Is it time to spawn a new enemy?
 	mNextEnemy -= deltaTime;
-	if (mEnemy <= 0.0f)
+	if (mNextEnemy <= 0.0f)
 	{
 		new Enemy(GetGame());
 		mNextEnemy += EnemyTime;

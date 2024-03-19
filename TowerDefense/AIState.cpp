@@ -1,5 +1,5 @@
 #include "AIState.h"
-#include "AIComponent"
+#include "AIComponent.h"
 #include <SDL_log.h>
 
 void AIPatrol::Update(float deltaTime)

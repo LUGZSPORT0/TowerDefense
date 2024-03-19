@@ -30,7 +30,7 @@ void NavComponent::StartPath(const Tile* start)
 	TurnTo(mNextNode->GetPosition());
 }
 
-void NavComponent::TurnTo(const Tile* start)
+void NavComponent::TurnTo(const Vector2& pos)
 {
 	// Vector from me to pos
 	Vector2 dir = pos - mOwner->GetPosition();
