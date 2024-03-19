@@ -40,7 +40,6 @@ void Tower::UpdateActor(float deltaTime)
 				SetRotation(Math::Atan2(-dir.y, dir.x));
 				// Spawn bullet at tower postion facing enemy
 				// the bullet inherits the Position of the tower and its rotation
-				// it sets at the x, y position and then comes out from where the tower is newly positioned
 				Bullet* b = new Bullet(GetGame());
 				b->SetPosition(GetPosition());
 				b->SetRotation(GetRotation());
