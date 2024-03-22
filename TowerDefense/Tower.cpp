@@ -12,6 +12,7 @@ Tower::Tower(class Game* game)
 	sc->SetTexture(game->GetTexture("Assets/Tower.png"));
 
 	mMove = new MoveComponent(this);
+	// this makes the tower rotate
 	//mMove->SetAngularSpeed(Math::Pi);
 
 	mNextAttack = AttackTime;

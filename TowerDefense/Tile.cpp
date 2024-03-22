@@ -25,7 +25,10 @@ void Tile::SetTileState(TileState state)
 
 void Tile::ToggleSelect()
 {
-	mSelected = !mSelected;
+	if (!sameSelected)
+	{
+		mSelected = !mSelected;
+	}
 	UpdateTexture();
 }
 

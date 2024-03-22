@@ -157,7 +157,6 @@ bool Grid::FindPath(Tile* start, Tile* goal)
 					neighbor->h = (neighbor->GetPosition() - goal->GetPosition()).Length();
 					// g(x) is the parent's g plus cost of traversing edge
 					neighbor->g = current->g + TileSize;
-					// sum of the g path-cost and heuristic
 					neighbor->f = neighbor->g + neighbor->h;
 					openSet.emplace_back(neighbor);
 					neighbor->mInOpenSet = true;

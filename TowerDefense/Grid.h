@@ -37,6 +37,7 @@ private:
 	// Time until next enemy
 	float mNextEnemy;
 
+	bool originalTileNull = true;
 	// Rows/columns in grid
 	const size_t NumRows = 7;
 	const size_t NumCols = 16;
