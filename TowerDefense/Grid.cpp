@@ -51,22 +51,22 @@ Grid::Grid(class Game* game)
 			if (i > 0)
 			{
 				mTiles[i][j]->mAdjacent.push_back(mTiles[i - 1][j]);
-				std::cout << "mTiles[" << i << "][" << j << "]-->adjacent to: " << "mTiles[" << i - 1 << "][" << j << "]" << "\n";
+				//std::cout << "mTiles[" << i << "][" << j << "]-->adjacent to: " << "mTiles[" << i - 1 << "][" << j << "]" << "\n";
 			}
 			if (i < NumRows - 1)
 			{
 				mTiles[i][j]->mAdjacent.push_back(mTiles[i + 1][j]);
-				std::cout << "mTiles[" << i << "][" << j << "]-->adjacent to: " << "mTiles[" << i + 1 << "][" << j << "]" << "\n";
+				//std::cout << "mTiles[" << i << "][" << j << "]-->adjacent to: " << "mTiles[" << i + 1 << "][" << j << "]" << "\n";
 			}
 			if (j > 0)
 			{
 				mTiles[i][j]->mAdjacent.push_back(mTiles[i][j - 1]);
-				std::cout << "mTiles[" << i << "][" << j << "]-->adjacent to: " << "mTiles[" << i << "][" << j - 1 << "]" << "\n";
+				//std::cout << "mTiles[" << i << "][" << j << "]-->adjacent to: " << "mTiles[" << i << "][" << j - 1 << "]" << "\n";
 			}
 			if (j < NumCols - 1)
 			{
 				mTiles[i][j]->mAdjacent.push_back(mTiles[i][j + 1]);
-				std::cout << "mTiles[" << i << "][" << j << "]-->adjacent to: " << "mTiles[" << i << "][" << j + 1 << "]" << "\n";
+				//std::cout << "mTiles[" << i << "][" << j << "]-->adjacent to: " << "mTiles[" << i << "][" << j + 1 << "]" << "\n";
 			}
 		}
 	}
@@ -146,34 +146,39 @@ bool Grid::FindPath(Tile* start, Tile* goal)
 			// Only check nodes that aren't in the closed set
 			if (!neighbor->mInClosedSet)
 			{
-				if (!neighbor->mInClosedSet)
+				// Not in the open set, so set parent
+				neighbor->mParent = current;
+				//std::cout << "my parent is: (" << static_cast<int>(current->GetPosition().x / 64) << ", " << static_cast<int>(current->GetPosition().y / 64) - 3 << ")\n";
+				//std::cout << "my position is: (" << static_cast<int>(neighbor->GetPosition().x / 64) << ", " << static_cast<int>(neighbor->GetPosition().y / 64) - 3 << ")\n";
+				//std::cout << "goal position is: (" << static_cast<int>(goal->GetPosition().x / 64) << ", " << static_cast<int>(goal->GetPosition().y / 64) - 3 << ")\n";
+				// estimated cost from this node to the goal node
+				neighbor->h = static_cast<int>((neighbor->GetPosition() - goal->GetPosition()).Length());
+				//std::cout <<" estimated cost h(x) " << neighbor->h << "\n";
+				// g(x) is the parent's g plus cost of traversing edge
+				neighbor->g = current->g + TileSize;
+				//std::cout << " cost g(x) " << (neighbor->g) << "\n";
+				// sum of the g path-cost and heuristic
+				neighbor->f = neighbor->g + neighbor->h;
+				//std::cout << " cost f(x) " << (neighbor->f) << "\n";
+				openSet.emplace_back(neighbor);
+				neighbor->mInOpenSet = true;
+				//std::cout << "\n";
+			}
+			else
+			{
+				// Compute g(x) cost if current becomes the parent
+				// this is in the closed set but we check to see if the g is less 
+				float newG = current->g + TileSize;
+				//std::cout << "my parent is: (" << static_cast<int>(current->GetPosition().x / 64) << ", " << static_cast<int>(current->GetPosition().y / 64) - 3 << ")\n";
+				//std::cout << "my position is: (" << static_cast<int>(neighbor->GetPosition().x / 64) << ", " << static_cast<int>(neighbor->GetPosition().y / 64) - 3 << ")\n";
+				//std::cout << "goal position is: (" << static_cast<int>(goal->GetPosition().x / 64) << ", " << static_cast<int>(goal->GetPosition().y / 64) - 3 << ")\n";
+				if (newG < neighbor->g)
 				{
-					// Not in the open set, so set parent
+					// Adopt this node
 					neighbor->mParent = current;
-					// estimated cost from this node to the goal node
-					std::cout << "my x position" << neighbor->GetPosition().x << "goal position" << goal->GetPosition().x << "\n";
-					std::cout << "my y position" << neighbor->GetPosition().y << "goal position" << goal->GetPosition().y << "\n";
-					std::cout <<" estimated cost " << (neighbor->GetPosition() - goal->GetPosition()).Length() << "\n";
-					neighbor->h = (neighbor->GetPosition() - goal->GetPosition()).Length();
-					// g(x) is the parent's g plus cost of traversing edge
-					neighbor->g = current->g + TileSize;
-					// sum of the g path-cost and heuristic
+					neighbor->g = newG;
+					// f(x) changes because g(x) changes
 					neighbor->f = neighbor->g + neighbor->h;
-					openSet.emplace_back(neighbor);
-					neighbor->mInOpenSet = true;
-				}
-				else
-				{
-					// Compute g(x) cost if current becomes the parent
-					float newG = current->g + TileSize;
-					if (newG < neighbor->g)
-					{
-						// Adopt this node
-						neighbor->mParent = current;
-						neighbor->g = newG;
-						// f(x) changes because g(x) changes
-						neighbor->f = neighbor->g + neighbor->h;
-					}
 				}
 			}
 		}
@@ -186,19 +191,35 @@ bool Grid::FindPath(Tile* start, Tile* goal)
 
 		// Find lowest cost node in open set
 		auto iter = std::min_element(openSet.begin(), openSet.end(),
+									// lambda expression [] is the capture clause (optional), since its empty it doesn't capture any variables by value or reference from the surrounding scope
+									// (Tile* a, Tile* b) is the parameter list
+									// return true or false based on return results	
+									// 
+									// calling the std::min_element iterates through the openSet, for each pair of element it calls the lambda function to compare their f values
+									// the iterator pointing to the element with min f is stored in the iter variable	
+									// 
+									// this may not find the right node since there could be a lot ties							
 									[](Tile* a, Tile* b) {
+										
 										return a->f < b->f;
 									});
-
+						
 		// Set to current and move from open to closed
+		// we then set current to the lowest cost node
+		// we remove that node from openset vector and change it from open to closed
+
 		current = *iter;
 		openSet.erase(iter);
 		current->mInOpenSet = false;
 		current->mInClosedSet = true;
+		//std::cout << "current nodes position is now : (" << static_cast<int>(current->GetPosition().x / 64) << ", " << static_cast<int>(current->GetPosition().y / 64) - 3 << ")\n";
 	}
 	while (current != goal);
 	
 	// Did we find a path?
+	// after reaching the end we will go through the lowest cost node in open set that we haven't evealuated and pick one of the very first ones
+	// as we go through them we will evaluate each neighbor and set open to the ones we previously set to closed (assuming they are no longer on the path)
+	// we essentially restart the path finding
 	return (current == goal) ? true : false;
 }
 
@@ -208,8 +229,12 @@ void Grid::UpdatePathTiles(class Tile* start)
 	for (size_t i = 0; i < NumRows; i++)
 	{
 		for (size_t j = 0; j < NumCols; j++)
-		{
-			if (!(i == 3 && j == 0) && !(i == 3 && j == 15))
+		{	
+			int yStartPos = ((Grid::GetStartTile()->GetPosition().y) / 64) - 3;
+			int xStartPos = ((Grid::GetStartTile()->GetPosition().x) / 64);			
+			int yEndPos = ((Grid::GetEndTile()->GetPosition().y) / 64) - 3;
+			int xEndPos = ((Grid::GetEndTile()->GetPosition().x) / 64);
+			if (!(i == yStartPos && j == xStartPos) && !(i == yEndPos && j == xEndPos))
 			{
 				mTiles[i][j]->SetTileState(Tile::EDefault);
 			}
@@ -245,7 +270,7 @@ void Grid::BuildTower()
 
 Tile* Grid::GetStartTile()
 {
-	return mTiles[3][0];
+	return mTiles[2][0];
 }
 
 Tile* Grid::GetEndTile()

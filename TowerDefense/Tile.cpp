@@ -41,7 +41,11 @@ void Tile::UpdateTexture()
 		text = "Assets/TileTan.png";
 		break;
 	case EBase:
+		class SpriteComponent* baseBottom;
+		baseBottom = new SpriteComponent(this, 10);
 		text = "Assets/TileGreen.png";
+		baseBottom->SetTexture(GetGame()->GetTexture(text));
+		text = "Assets/Base.png";
 		break;
 	case EPath:
 		if (mSelected)

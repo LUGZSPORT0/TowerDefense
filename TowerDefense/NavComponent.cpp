@@ -12,8 +12,9 @@ void NavComponent::Update(float deltaTime)
 {
 	if (mNextNode)
 	{
-		// If we're at the next node, advance along path
+		// If we're at the next node, advance along path (mOwner is the enemy)
 		Vector2 diff = mOwner->GetPosition() - mNextNode->GetPosition();
+		// Once we are at the end of the node we need to find the next node and go to that 
 		if (Math::NearZero(diff.Length(), 2.0f))
 		{
 			mNextNode = mNextNode->GetParent();
